@@ -23,6 +23,7 @@ export default class Board {
 
     getSelectedTilesId() {
         this.selectedTiles = this.rows.map(row => row.selectedTilesId).flat();
-        console.log('selected tile: ${this.selectedTiles.join(",")}')
+        console.log(`selected tile: ${this.selectedTiles.join(",")}`);
     }
+
 }   

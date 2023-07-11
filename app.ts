@@ -1,4 +1,4 @@
-import Board from "./Board";
+import Gomoku from "./Gomoku";
 
-const game = new Board(10,10);
-document.getElementById('gomoku')?.appendChild(game.element);
+const game = new Gomoku({rowNumber: 15, tileNumberPerRow: 15});
+document.getElementById('gomoku')?.appendChild(game.board.element);
