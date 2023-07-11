@@ -28,8 +28,14 @@ export default class Tile {
             this.status === STATUS.AVAILABLE ? STATUS.SELECTED : STATUS.AVAILABLE;
         this.element.classList.add(this.status.toLowerCase());
     }
+    setAvailable() {
+        this.status = STATUS.AVAILABLE;
+        this.element.classList.remove(STATUS.SELECTED.toLowerCase());
+        this.element.classList.add(STATUS.AVAILABLE.toLowerCase());
+    }
 
     get isSelected() {
         return this.status === STATUS.SELECTED;
+
     }
 }

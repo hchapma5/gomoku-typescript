@@ -26,4 +26,8 @@ export default class Board {
         console.log(`selected tile: ${this.selectedTiles.join(",")}`);
     }
 
+    resetBoard() {
+        this.rows.forEach((row) => row.tiles.forEach((tile) => tile.setAvailable()));
+    }
+
 }   
