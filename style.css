@@ -46,15 +46,6 @@ body {
     flex-grow: 1;
 }
 
-.tile.occupied {
-    background-color: rgba(0, 0, 0, .08);
-    cursor: not-allowed;
-}
-
-.tile.selected {
-    background-color: #000000;
-}
-
 .tile.available {
     background-color: rgb(144, 151, 168);
 }
@@ -62,6 +53,14 @@ body {
 .tile.available:hover {
     background-color: #16437E;
     opacity: 0.5;
+}
+
+.tile.black {
+    background-color: black;
+}
+
+.tile.white {
+    background-color: white;
 }
 
 .reset-button {

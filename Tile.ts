@@ -1,41 +1,43 @@
 enum STATUS {
-    AVAILABLE = 'AVAILABLE',
-    OCCUPIED = 'OCCUPIED',
-    SELECTED = 'SELECTED'
+   AVAILABLE = "AVAILABLE",
+   BLACK = "BLACK",
+   WHITE = "WHITE",
 }
 
 export default class Tile {
+   id: number;
+   status: STATUS;
+   element: HTMLDivElement;
 
-    id: number;
-    status: STATUS;
-    element: HTMLDivElement
+   constructor(id: number) {
+      this.id = id;
+      this.status = STATUS.AVAILABLE;
+      this.element = document.createElement("div");
+      this.element.classList.add("tile");
+      this.element.classList.add(this.status.toLowerCase());
+   }
 
-    constructor(id: number, isOccupied: boolean = false) {
-        this.id = id;
-        this.status = isOccupied ? STATUS.OCCUPIED : STATUS.AVAILABLE;
-        this.element = document.createElement('div');
-        this.element.classList.add('tile');
-        this.element.classList.add(this.status.toLowerCase());
-        this.element.addEventListener('click', () => {
-            this.handleClick()
-        })
-    }
+   isAvailable() {
+      return this.status === STATUS.AVAILABLE;
+   }
 
-    handleClick() {
-        if (this.status === STATUS.OCCUPIED) return
-        this.element.classList.remove(this.status.toLowerCase());
-        this.status =
-            this.status === STATUS.AVAILABLE ? STATUS.SELECTED : STATUS.AVAILABLE;
-        this.element.classList.add(this.status.toLowerCase());
-    }
-    setAvailable() {
-        this.status = STATUS.AVAILABLE;
-        this.element.classList.remove(STATUS.SELECTED.toLowerCase());
-        this.element.classList.add(STATUS.AVAILABLE.toLowerCase());
-    }
+   setAvailable() {
+      this.element.classList.remove(this.status.toLowerCase());
+      this.status = STATUS.AVAILABLE;
+      this.element.classList.add(this.status.toLowerCase());
+   }
 
-    get isSelected() {
-        return this.status === STATUS.SELECTED;
+   setBlack() {
+      if (this.isAvailable()) {
+         this.status = STATUS.BLACK;
+         this.element.classList.add(this.status.toLowerCase());
+      }
+   }
 
-    }
+   setWhite() {
+      if (this.isAvailable()) {
+         this.status = STATUS.WHITE;
+         this.element.classList.add(this.status.toLowerCase());
+      }
+   }
 }
