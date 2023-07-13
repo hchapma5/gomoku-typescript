@@ -30,4 +30,10 @@ export default class Board {
         this.rows.forEach((row) => row.tiles.forEach((tile) => tile.setAvailable()));
     }
 
+    changeBoardSize(value: number) {
+        this.rows = Array.from({ length: value }).map((_, index) => {
+            return new Row(index, value);
+        });
+        this.element.replaceChildren(...this.rows.map((row) => row.element));
+    }
 }   
