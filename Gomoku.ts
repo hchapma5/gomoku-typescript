@@ -17,6 +17,7 @@ export default class Gomoku {
    inputSlider: InputSlider;
    game: HTMLElement | null;
    player: PLAYER.BLACK | PLAYER.WHITE;
+   textBox: HTMLDivElement;
 
    constructor() {
       this.board = new Board(DEFAULT_SIZE, DEFAULT_SIZE);
@@ -28,8 +29,14 @@ export default class Gomoku {
          (value) => this.changeBoardSize(value)
       );
       this.game = document.getElementById("gomoku");
-      this.renderGame();
+
       this.player = PLAYER.BLACK; /* BLACK goes first */
+
+      this.textBox = document.createElement("div");
+      this.textBox.classList.add("text-box");
+      this.textBox.textContent = `${this.player}'s turn`;
+
+      this.renderGame();
 
       this.board.rows.forEach((row) => {
          row.tiles.forEach((tile) => {
@@ -55,13 +62,16 @@ export default class Gomoku {
       console.log(this.player);
       if (this.player === PLAYER.BLACK) {
          this.player = PLAYER.WHITE;
+         this.textBox.textContent = `${this.player}'s turn`;
       } else if (this.player === PLAYER.WHITE) {
          this.player = PLAYER.BLACK;
+         this.textBox.textContent = `${this.player}'s turn`;
       }
    }
 
    resetGame() {
       this.board.resetBoard();
+      this.player = PLAYER.BLACK;
    }
 
    changeBoardSize(value: number) {
@@ -71,6 +81,7 @@ export default class Gomoku {
    renderGame() {
       this.game?.append(
          this.board.element,
+         this.textBox,
          this.inputSlider.slider,
          this.resetButton.button
       );
