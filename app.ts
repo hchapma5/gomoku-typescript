@@ -1,3 +1,3 @@
-import Gomoku from "./Gomoku";
+import Gomoku from "./game/Gomoku";
 
 const game = new Gomoku();

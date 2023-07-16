@@ -5,12 +5,9 @@ export default class Board {
     selectedTiles: number[] = [];
     element: HTMLDivElement;
 
-    constructor(
-        rowNumber: number,
-        tileNumberPerRow: number,
-    ) {
-        this.rows = Array.from({ length: rowNumber }).map((_, index) => {
-            return new Row(index, tileNumberPerRow);
+    constructor(boardSize: number) {
+        this.rows = Array.from({ length: boardSize }).map((_, index) => {
+            return new Row(index, boardSize);
         });
         this.element = document.createElement("div");
         this.element.classList.add("board");
@@ -18,7 +15,9 @@ export default class Board {
     }
 
     resetBoard() {
-        this.rows.forEach((row) => row.tiles.forEach((tile) => tile.setAvailable()));
+        this.rows.forEach((row) =>
+            row.tiles.forEach((tile) => tile.setAvailable())
+        );
     }
 
     changeBoardSize(value: number) {
@@ -27,4 +26,4 @@ export default class Board {
         });
         this.element.replaceChildren(...this.rows.map((row) => row.element));
     }
-}   
+}

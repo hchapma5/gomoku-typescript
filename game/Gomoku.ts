@@ -1,7 +1,7 @@
-import Board from "./Board";
-import Button from "./Button";
-import InputSlider from "./InputSlider";
-import TextBox from "./TextBox";
+import Board from "../components/Board";
+import Button from "../components/Button";
+import InputSlider from "../components/InputSlider";
+import TextBox from "../components/TextBox";
 
 enum PLAYER {
     BLACK = "BLACK",
@@ -28,7 +28,7 @@ export default class Gomoku {
     game: HTMLElement | null;
 
     constructor() {
-        this.board = new Board(DEFAULT_SIZE, DEFAULT_SIZE);
+        this.board = new Board(DEFAULT_SIZE);
         this.button = new Button("Start game", () => this.startGame());
         this.textBox = new TextBox();
         this.inputSlider = new InputSlider(
@@ -46,51 +46,38 @@ export default class Gomoku {
         this.status = STATUS.IN_GAME;
         this.player = PLAYER.BLACK;
         this.textBox.element.textContent = `${this.player}'s turn`;
-        const button = new Button("Reset game", () => this.resetGame()).button;
-        this.button.button.parentNode?.replaceChild(button, this.button.button);
-        this.button.button = button;
+        const button = new Button("Reset game", () => this.resetGame()).element;
+        this.button.element.parentNode?.replaceChild(
+            button,
+            this.button.element
+        );
+        this.button.element = button;
         this.handleTurn();
     }
 
     resetGame(): void {
         this.status = STATUS.PRE_GAME;
-        const newBoard: Board = new Board(DEFAULT_SIZE, DEFAULT_SIZE);
+        const newBoard: Board = new Board(DEFAULT_SIZE);
         this.board.element.parentNode?.replaceChild(
             newBoard.element,
             this.board.element
         );
         this.board = newBoard;
         this.textBox.element.textContent = "Select board size and start game";
-        const button = new Button("Start game", () => this.startGame()).button;
-        this.button.button.parentNode?.replaceChild(button, this.button.button);
-        this.button.button = button;
-    }
-
-    handleTurn(): void {
-        this.board.rows.forEach((row) => {
-            row.tiles.forEach((tile) => {
-                tile.element.addEventListener("click", () => {
-                    if (tile.isAvailable() === false) {
-                        return;
-                    } else {
-                        if (this.player === PLAYER.BLACK) {
-                            tile.setBlack();
-                        } else {
-                            tile.setWhite();
-                        }
-                        this.evaluateTurn(this.player);
-                    }
-                });
-            });
-        });
+        const button = new Button("Start game", () => this.startGame()).element;
+        this.button.element.parentNode?.replaceChild(
+            button,
+            this.button.element
+        );
+        this.button.element = button;
     }
 
     renderGame(): void {
         this.game?.append(
             this.board.element,
             this.textBox.element,
-            this.inputSlider.slider,
-            this.button.button
+            this.inputSlider.element,
+            this.button.element
         );
     }
 
@@ -98,12 +85,41 @@ export default class Gomoku {
         if (this.status === STATUS.PRE_GAME) this.board.changeBoardSize(value);
     }
 
-    evaluateTurn(player: PLAYER): void {
+    handleTurn(): void {
+        this.board.rows.forEach((row) => {
+            row.tiles.forEach((tile) => {
+                const clickHandler = () => {
+                    if (
+                        tile.isAvailable() === false ||
+                        this.status === STATUS.POST_GAME
+                    ) {
+                        return;
+                    } else {
+                        if (this.player === PLAYER.BLACK) {
+                            tile.setBlack();
+                        } else {
+                            tile.setWhite();
+                        }
+                        this.processTurn(this.player);
+                    }
+                };
+
+                tile.element.addEventListener("click", clickHandler);
+
+                // Remove the click event listener when the game is over
+                if (this.status === STATUS.POST_GAME) {
+                    tile.element.removeEventListener("click", clickHandler);
+                }
+            });
+        });
+    }
+
+    processTurn(player: PLAYER): void {
         if (this.checkWin(player) === true) {
-            this.textBox.element.textContent = `${player} wins!`;
+            this.textBox.element.textContent = `Game over, ${player} wins!`;
             this.status = STATUS.POST_GAME;
         } else if (this.checkDraw() === true) {
-            this.textBox.element.textContent = "It's a draw!";
+            this.textBox.element.textContent = "Game over, It's a draw!";
             this.status = STATUS.POST_GAME;
         } else {
             this.player =
@@ -120,27 +136,16 @@ export default class Gomoku {
                 }
             }
         }
-        console.log("It's a draw!");
         return true; // All tiles are occupied, it's a draw
     }
 
     checkWin(player: PLAYER): boolean {
-        console.log("called checkWin");
-        if (this.checkHorizontalWin(player) === true) {
-            console.log("horizontal win");
-            return true;
-        }
+        if (this.checkHorizontalWin(player) === true) return true;
 
-        if (this.checkVerticalWin(player) === true) {
-            console.log("vertical win");
-            return true;
-        }
+        if (this.checkVerticalWin(player) === true) return true;
 
-        if (this.checkDiagonalWin(player) === true) {
-            console.log("diagonal win");
-            return true;
-        }
-        console.log("no win");
+        if (this.checkDiagonalWin(player) === true) return true;
+
         return false;
     }
 
