@@ -8,7 +8,6 @@ export default class InputSlider {
         max: number,
         onChange: (value: number) => void
     ) {
-        // Create the slider element
         this.onChange = onChange;
         this.element = document.createElement("input");
         this.element.type = "range";
@@ -17,7 +16,6 @@ export default class InputSlider {
         this.element.max = String(max);
         this.element.value = String(value);
 
-        // Update label when slider value changes
         this.element.addEventListener("input", () => {
             const value = Number(this.element.value);
             this.onChange(value);
