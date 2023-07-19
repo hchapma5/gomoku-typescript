@@ -29,10 +29,11 @@ export default class Gomoku {
   private game: HTMLElement | null;
 
   constructor() {
-    this.status = STATUS.PRE_GAME;
-    this.player = PLAYER.BLACK;
+    this.game = document.getElementById('gomoku');
     this.board = new Board(DEFAULT_SIZE);
     this.textBox = new TextBox();
+    this.buttonStart = new Button('Start game', () => this.startGame());
+    this.buttonReset = new Button('Reset game', () => this.resetGame());
     this.inputSlider = new InputSlider(
       DEFAULT_SIZE,
       MIN_BOARD_SIZE,
@@ -42,20 +43,18 @@ export default class Gomoku {
           ? this.board.changeBoardSize(value)
           : null
     );
-    this.buttonStart = new Button('Start game', () => this.startGame());
-    this.buttonReset = new Button('Reset game', () => this.resetGame());
-    this.game = document.getElementById('gomoku');
     this.renderGame();
-    this.resetGame(); //Initiate the game
+    this.resetGame(); // Initiate PRE_GAME settings
+    this.handleTurn(); // Setup click handler for tiles
   }
 
   private startGame(): void {
     this.status = STATUS.IN_GAME;
     this.player = PLAYER.BLACK;
     this.textBox.element.textContent = `${this.player}'s turn`;
-    this.buttonStart.disable(); // Disable Start button during the game
-    this.buttonReset.enable(); // Enable Reset button during the game
-    this.handleTurn();
+    this.buttonStart.disable();
+    this.buttonReset.enable();
+    this.inputSlider.disable();
   }
 
   private resetGame(): void {
@@ -63,8 +62,9 @@ export default class Gomoku {
     this.player = PLAYER.BLACK;
     this.board.resetBoard();
     this.textBox.element.textContent = 'Select board size and start the game';
-    this.buttonReset.disable(); // Disable Reset button on reset
-    this.buttonStart.enable(); // Enable Start button on reset
+    this.buttonReset.disable();
+    this.buttonStart.enable();
+    this.inputSlider.enable();
   }
 
   private renderGame(): void {
@@ -72,7 +72,7 @@ export default class Gomoku {
       this.game.append(
         this.board.element,
         this.textBox.element,
-        this.inputSlider.element,
+        this.inputSlider.container,
         this.buttonStart.element,
         this.buttonReset.element
       );
