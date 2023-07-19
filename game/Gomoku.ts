@@ -2,6 +2,7 @@ import Board from '../components/Board';
 import Button from '../components/Button';
 import InputSlider from '../components/InputSlider';
 import TextBox from '../components/TextBox';
+import Tile from '../components/Tile';
 
 enum PLAYER {
   BLACK = 'BLACK',
@@ -19,17 +20,19 @@ const MIN_BOARD_SIZE: number = 5;
 const MAX_BOARD_SIZE: number = 19;
 
 export default class Gomoku {
-  status: STATUS;
-  player: PLAYER;
-  board: Board;
-  button: Button;
-  inputSlider: InputSlider;
-  textBox: TextBox;
-  game: HTMLElement | null;
+  private status: STATUS;
+  private player: PLAYER;
+  private board: Board;
+  private buttonStart: Button;
+  private buttonReset: Button;
+  private textBox: TextBox;
+  private inputSlider: InputSlider;
+  private game: HTMLElement | null;
 
   constructor() {
+    this.status = STATUS.PRE_GAME;
+    this.player = PLAYER.BLACK;
     this.board = new Board(DEFAULT_SIZE);
-    this.button = new Button('Start game', () => this.startGame());
     this.textBox = new TextBox();
     this.inputSlider = new InputSlider(
       DEFAULT_SIZE,
@@ -37,78 +40,75 @@ export default class Gomoku {
       MAX_BOARD_SIZE,
       (value) => this.board.changeBoardSize(value)
     );
+    this.buttonStart = new Button('Start game', () => this.startGame());
+    this.buttonReset = new Button('Reset game', () => this.resetGame());
     this.game = document.getElementById('gomoku');
-    this.resetGame();
     this.renderGame();
+    this.resetGame(); //Initiate the game
   }
 
-  startGame(): void {
+  private startGame(): void {
+    console.log('Start game');
     this.status = STATUS.IN_GAME;
     this.player = PLAYER.BLACK;
     this.textBox.element.textContent = `${this.player}'s turn`;
-    const button = new Button('Reset game', () => this.resetGame()).element;
-    this.button.element.parentNode?.replaceChild(button, this.button.element);
-    this.button.element = button;
+    this.buttonStart.disable(); // Disable Start button during the game
+    this.buttonReset.enable(); // Enable Reset button during the game
     this.handleTurn();
   }
 
-  resetGame(): void {
+  private resetGame(): void {
     this.status = STATUS.PRE_GAME;
-    const newBoard: Board = new Board(DEFAULT_SIZE);
-    this.board.element.parentNode?.replaceChild(
-      newBoard.element,
-      this.board.element
-    );
-    this.board = newBoard;
-    this.textBox.element.textContent = 'Select board size and start game';
-    const button = new Button('Start game', () => this.startGame()).element;
-    this.button.element.parentNode?.replaceChild(button, this.button.element);
-    this.button.element = button;
+    this.player = PLAYER.BLACK;
+    this.board.resetBoard();
+    this.textBox.element.textContent = 'Select board size and start the game';
+    this.buttonReset.disable(); // Disable Reset button on reset
+    this.buttonStart.enable(); // Enable Start button on reset
   }
 
-  renderGame(): void {
-    this.game?.append(
-      this.board.element,
-      this.textBox.element,
-      this.inputSlider.element,
-      this.button.element
-    );
+  private renderGame(): void {
+    if (this.game) {
+      this.game.append(
+        this.board.element,
+        this.textBox.element,
+        this.inputSlider.element,
+        this.buttonStart.element,
+        this.buttonReset.element
+      );
+    }
   }
 
-  handleTurn(): void {
-    this.board.rows.forEach((row) => {
-      row.tiles.forEach((tile) => {
+  private handleTurn(): void {
+    for (const row of this.board.rows) {
+      for (const tile of row.tiles) {
+        if (!tile.isAvailable() || this.status === STATUS.POST_GAME) {
+          continue;
+        }
+
         const clickHandler = () => {
-          if (
-            tile.isAvailable() === false ||
-            this.status === STATUS.POST_GAME
-          ) {
-            return;
-          } else {
-            if (this.player === PLAYER.BLACK) {
-              tile.setBlack();
-            } else {
-              tile.setWhite();
-            }
-            this.processTurn(this.player);
-          }
+          this.makeMove(tile);
         };
 
         tile.element.addEventListener('click', clickHandler);
 
         // Remove the click event listener when the game is over
-        if (this.status === STATUS.POST_GAME) {
-          tile.element.removeEventListener('click', clickHandler);
-        }
-      });
-    });
+        // if (this.status === STATUS.POST_GAME) {
+        //   tile.element.removeEventListener('click', clickHandler);
+        // }
+      }
+    }
   }
 
-  processTurn(player: PLAYER): void {
-    if (this.checkWin(player) === true) {
-      this.textBox.element.textContent = `Game over, ${player} wins!`;
+  private makeMove(tile: Tile): void {
+    if (this.player === PLAYER.BLACK) {
+      tile.setBlack();
+    } else {
+      tile.setWhite();
+    }
+    if (this.checkWin(this.player)) {
+      this.textBox.element.textContent = `Game over, ${this.player} wins!`;
       this.status = STATUS.POST_GAME;
-    } else if (this.checkDraw() === true) {
+    } else if (this.checkDraw()) {
       this.textBox.element.textContent = "Game over, It's a draw!";
       this.status = STATUS.POST_GAME;
     } else {
@@ -117,25 +117,18 @@ export default class Gomoku {
     }
   }
 
-  checkDraw(): boolean {
-    for (let i = 0; i < this.board.rows.length; i++) {
-      for (let j = 0; j < this.board.rows[i].tiles.length; j++) {
-        if (this.board.rows[i].tiles[j].isAvailable()) {
-          return false; // If any tile is available, it's not a draw
-        }
-      }
-    }
-    return true; // All tiles are occupied, it's a draw
+  private checkDraw(): boolean {
+    return this.board.rows.every((row) =>
+      row.tiles.every((tile) => !tile.isAvailable())
+    );
   }
 
-  checkWin(player: PLAYER): boolean {
-    if (this.checkHorizontalWin(player) === true) return true;
-
-    if (this.checkVerticalWin(player) === true) return true;
-
-    if (this.checkDiagonalWin(player) === true) return true;
-
-    return false;
+  private checkWin(player: PLAYER): boolean {
+    return (
+      this.checkHorizontalWin(player) ||
+      this.checkVerticalWin(player) ||
+      this.checkDiagonalWin(player)
+    );
   }
 
   checkHorizontalWin(player: PLAYER): boolean {
