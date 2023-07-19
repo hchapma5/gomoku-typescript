@@ -2,7 +2,6 @@ import Board from '../components/Board';
 import Button from '../components/Button';
 import InputSlider from '../components/InputSlider';
 import TextBox from '../components/TextBox';
-import Tile from '../components/Tile';
 
 enum PLAYER {
   BLACK = 'BLACK',
@@ -38,7 +37,10 @@ export default class Gomoku {
       DEFAULT_SIZE,
       MIN_BOARD_SIZE,
       MAX_BOARD_SIZE,
-      (value) => this.board.changeBoardSize(value)
+      (value) =>
+        this.status === STATUS.PRE_GAME
+          ? this.board.changeBoardSize(value)
+          : null
     );
     this.buttonStart = new Button('Start game', () => this.startGame());
     this.buttonReset = new Button('Reset game', () => this.resetGame());
@@ -48,7 +50,6 @@ export default class Gomoku {
   }
 
   private startGame(): void {
-    console.log('Start game');
     this.status = STATUS.IN_GAME;
     this.player = PLAYER.BLACK;
     this.textBox.element.textContent = `${this.player}'s turn`;
@@ -79,37 +80,32 @@ export default class Gomoku {
   }
 
   private handleTurn(): void {
-    for (const row of this.board.rows) {
-      for (const tile of row.tiles) {
-        if (!tile.isAvailable() || this.status === STATUS.POST_GAME) {
-          continue;
-        }
-
+    this.board.rows.forEach((row) => {
+      row.tiles.forEach((tile) => {
         const clickHandler = () => {
-          this.makeMove(tile);
+          if (!tile.isAvailable() || this.status !== STATUS.IN_GAME) {
+            return;
+          } else {
+            if (this.player === PLAYER.BLACK) {
+              tile.setBlack();
+            } else {
+              tile.setWhite();
+            }
+            this.processTurn(this.player);
+          }
         };
 
         tile.element.addEventListener('click', clickHandler);
-
-        // Remove the click event listener when the game is over
-        // if (this.status === STATUS.POST_GAME) {
-        //   tile.element.removeEventListener('click', clickHandler);
-        // }
-      }
-    }
+      });
+    });
   }
 
-  private makeMove(tile: Tile): void {
-    if (this.player === PLAYER.BLACK) {
-      tile.setBlack();
-    } else {
-      tile.setWhite();
-    }
-    if (this.checkWin(this.player)) {
-      this.textBox.element.textContent = `Game over, ${this.player} wins!`;
+  private processTurn(player: PLAYER): void {
+    if (this.checkWin(player)) {
+      this.textBox.element.textContent = `Game over! ${player} wins!`;
       this.status = STATUS.POST_GAME;
     } else if (this.checkDraw()) {
-      this.textBox.element.textContent = "Game over, It's a draw!";
+      this.textBox.element.textContent = "Game over! It's a draw!";
       this.status = STATUS.POST_GAME;
     } else {
       this.player = this.player === PLAYER.BLACK ? PLAYER.WHITE : PLAYER.BLACK;

@@ -17,7 +17,7 @@ export default class Button {
   }
 
   enable() {
-    this.element.removeEventListener('click', this.onClick);
+    this.element.addEventListener('click', this.onClick);
     this.element.disabled = false;
     this.element.removeAttribute('hidden');
   }

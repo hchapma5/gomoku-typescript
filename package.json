@@ -8,6 +8,17 @@
   },
   "dependencies": {
     "parcel": "^2.6.2",
-    "typescript": "^4.7.4"
-  }
+    "typescript": "^4.7.4",
+    "yarn": "^1.22.19"
+  },
+  "description": "## Description",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/hchapma5/gomoku-typescript.git"
+  },
+  "author": "",
+  "bugs": {
+    "url": "https://github.com/hchapma5/gomoku-typescript/issues"
+  },
+  "homepage": "https://github.com/hchapma5/gomoku-typescript#readme"
 }
