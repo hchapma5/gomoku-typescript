@@ -45,7 +45,6 @@ export default class Gomoku {
     );
     this.renderGame();
     this.resetGame(); // Initiate PRE_GAME settings
-    this.handleTurn(); // Setup click handler for tiles
   }
 
   private startGame(): void {
@@ -55,6 +54,7 @@ export default class Gomoku {
     this.buttonStart.disable();
     this.buttonReset.enable();
     this.inputSlider.disable();
+    this.handleTurn();
   }
 
   private resetGame(): void {

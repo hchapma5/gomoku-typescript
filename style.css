@@ -27,35 +27,37 @@ body {
 .board {
   display: flex;
   flex-direction: column;
-  background-color: rgb(238, 196, 90);
-  padding: 0.5rem;
-  row-gap: 0.5rem;
+  background-color: rgb(57, 57, 57);
+  padding: 5px;
+  row-gap: 5px;
   width: 600px;
   height: 600px;
 }
 
 .row {
   display: flex;
-  column-gap: 0.5rem;
+  column-gap: 5px;
   flex-grow: 1;
 }
 
 .tile {
-  border-radius: 50%;
+  /* border-radius: 50%; */
   cursor: pointer;
   flex-grow: 1;
 }
 
 .tile.available {
-  background-color: rgb(144, 151, 168);
+  background-color: rgb(138, 114, 71);
 }
 
 .tile.black {
-  background-color: black;
+  border-radius: 50%;
+  background-image: linear-gradient(black, rgb(81, 81, 81));
 }
 
 .tile.white {
-  background-color: white;
+  border-radius: 50%;
+  background-image: linear-gradient(white, grey);
 }
 
 .button {
