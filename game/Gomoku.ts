@@ -30,7 +30,7 @@ export default class Gomoku {
 
   constructor() {
     this.game = document.getElementById('gomoku');
-    this.board = new Board(DEFAULT_SIZE, this.handleTurn);
+    this.board = new Board(DEFAULT_SIZE);
     this.textBox = new TextBox();
     this.buttonStart = new Button('Start game', () => this.startGame());
     this.buttonReset = new Button('Reset game', () => this.resetGame());
@@ -54,6 +54,7 @@ export default class Gomoku {
     this.buttonStart.disable();
     this.buttonReset.enable();
     this.inputSlider.disable();
+    this.handleTurn();
   }
 
   private resetGame(): void {

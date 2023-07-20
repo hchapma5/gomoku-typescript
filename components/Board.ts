@@ -5,8 +5,7 @@ export default class Board {
   element: HTMLDivElement;
   onClick: () => void;
 
-  constructor(boardSize: number, onClick: () => void) {
-    this.onClick = onClick;
+  constructor(boardSize: number) {
     this.rows = Array.from({ length: boardSize }).map((_, index) => {
       return new Row(index, boardSize);
     });
