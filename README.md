@@ -6,7 +6,7 @@ This project is a Gomoku game implemented in TypeScript. Gomoku, also known as F
 
 ## How to run
 
--   run locally: 'yarn start'
+- run: 'npm install' and 'npm start' in the root directory to start the server
 
 ## How to play
 
@@ -18,3 +18,8 @@ This project is a Gomoku game implemented in TypeScript. Gomoku, also known as F
 6. If a winning position or a draw is detected, the game will automatically end.
 7. At any time during the game, you can click the "Reset" button to restart the game.
 8. Enjoy playing Gomoku!
+
+## Note
+
+I had considered some additonal bonus features, such as an AI (algorithm) or implementing the "Swap2" rule. However, to avoid scope creep,
+I decided to invest my time into practicing my css and refining my game logic. I would love some feedback on my code and design choices! Thank you!
