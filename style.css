@@ -27,7 +27,8 @@ body {
 .board {
   display: flex;
   flex-direction: column;
-  background-color: rgb(57, 57, 57);
+  background-color: rgb(165, 150, 110);
+  border: groove 1rem rgb(220, 200, 150);
   padding: 5px;
   row-gap: 5px;
   width: 600px;
@@ -41,23 +42,29 @@ body {
 }
 
 .tile {
-  /* border-radius: 50%; */
+  border-radius: 50%;
+  background-color: rgb(220, 200, 150);
   cursor: pointer;
   flex-grow: 1;
 }
 
-.tile.available {
-  background-color: rgb(138, 114, 71);
-}
-
 .tile.black {
-  border-radius: 50%;
-  background-image: linear-gradient(black, rgb(81, 81, 81));
+  background-image: linear-gradient(black, rgb(88, 88, 88));
 }
 
 .tile.white {
-  border-radius: 50%;
-  background-image: linear-gradient(white, grey);
+  background-image: linear-gradient(whitesmoke, grey);
+}
+
+.tile.available:hover {
+  box-shadow: 0 0 2px 2px rgba(0, 0, 0, 0.1);
+  transform: scale(1.1);
+}
+
+.tile.black:hover,
+.tile.white:hover {
+  box-shadow: none;
+  transform: none;
 }
 
 .button {

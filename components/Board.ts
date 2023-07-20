@@ -1,14 +1,12 @@
 import Row from './Row';
-
-// pass click handler through the board class
-// iterate through each row and tile and apply the click handler
-
 export default class Board {
   rows: Row[];
   selectedTiles: number[] = [];
   element: HTMLDivElement;
+  onClick: () => void;
 
-  constructor(boardSize: number) {
+  constructor(boardSize: number, onClick: () => void) {
+    this.onClick = onClick;
     this.rows = Array.from({ length: boardSize }).map((_, index) => {
       return new Row(index, boardSize);
     });
